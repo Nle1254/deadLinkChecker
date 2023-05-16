@@ -57,7 +57,7 @@ def check_links(url, referer, output_filename, max_depth, depth):
         #check if response fails
         if "https://www.google.com/maps" in link or "tel:" in link:
             continue
-        if is_external_link(base_url, url):
+        if is_external_link(base_url, link):
             if response.status_code != 200:
                 dead_links.add(f"DEAD EXTERNAL LINK: {link} \nCODE: {link_response.status_code}\nREFERENCE: {referer} \n")
                 print(f'URL-EXT RESPONSE {link_response.status_code}')
@@ -81,6 +81,12 @@ def is_external_link(base_url, link_url):
     """
     base_domain = get_domain(base_url)
     external_domain = get_domain(link_url)
+
+    if not external_domain:
+        return False
+    
+    if external_domain.startswith("//"):
+        external_domain = external_domain[2:]
     return base_domain != external_domain
 def get_domain(url):
     """
